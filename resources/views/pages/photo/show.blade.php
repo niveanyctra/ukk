@@ -9,6 +9,13 @@
             margin-left: 30px
         }
 
+        .like-comment-fixed {
+            position: fixed;
+            margin-bottom: 50px;
+            bottom: 0;
+            z-index: 1;
+        }
+
         .comment-fixed {
             position: fixed;
             margin-bottom: 20px;
@@ -55,6 +62,22 @@
                     </div>
                 @endforeach
             @endif
+            <div style="display: flex" class="like-comment-fixed">
+                <form action="{{ route('like', $photo->id) }}" method="post">
+                    @csrf
+                    @php
+                        $userLiked = $photo->like->contains('user_id', auth()->id());
+                    @endphp
+                    <button type="submit" style="background-color: white;border:0;">
+                        <i class="{{ $userLiked ? 'fa-solid fa-heart fa-2xl' : 'fa-regular fa-heart fa-2xl' }}"></i>
+                    </button>
+                    @if ($photo->like)
+                        {{ $photo->like->where('photo_id', $photo->id)->count() }} Likes
+                    @endif
+                </form>
+                <a href="{{ route('photo.show', $photo->id) }}"><i class="fa-regular fa-comment fa-2xl"
+                        style="margin-left: 10px"></i></a>
+            </div>
             <form action="{{ route('comment', $photo->id) }}" method="post" class="comment-fixed">
                 @csrf
                 <input type="text" name="isi" placeholder="Tambah komentar...">
