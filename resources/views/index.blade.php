@@ -13,11 +13,22 @@
     </style>
 @endpush
 @section('content')
+    <form action="{{ route('search') }}" method="post">
+        @csrf
+        <input type="text" name="query">
+        <button type="submit">Cari</button>
+    </form>
     @foreach ($photo as $item)
         <div class="postingan">
             <div class="top-postingan">
                 <p>
-                    <span style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span> -
+                    @if ($item->user_id == Auth::user()->id)
+                        <a href="{{ route('account.index') }}"><span
+                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                    @else
+                        <a href="{{ route('user', $item->user->id) }}"><span
+                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                    @endif
                     {{ $item->created_at->diffForHumans() }}
                 </p>
             </div>
@@ -45,6 +56,7 @@
                 </div>
                 <div>
                     <span style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span>
+                    {{ $item->judul }} <br>
                     {{ $item->deskripsi }}
                 </div>
                 <div style="margin-top: 8px">

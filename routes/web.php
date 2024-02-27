@@ -22,10 +22,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [FrontendController::class, 'home'])->name('home');
-Route::get('/create', [FrontendController::class, 'create'])->name('create')->middleware('auth');
 Route::post('/{id}/comment', [CommentController::class, 'comment'])->name('comment')->middleware('auth');
 Route::post('/{id}/like', [LikeController::class, 'like'])->name('like')->middleware('auth');
-Route::get('/{id}/dislike', [LikeController::class, 'dislike'])->name('dislike')->middleware('auth');
+Route::post('/search', [FrontendController::class, 'search'])->name('search')->middleware('auth');
 
 Route::get('login', [AuthController::class, 'index'])->name('login')->middleware('guest');
 Route::post('login', [AuthController::class, 'login'])->name('login.proccess');
@@ -41,6 +40,7 @@ Route::controller(AccountController::class)->prefix('account')->name('account.')
     Route::post('/{id}', 'update')->name('update');
     Route::get('/{id}', 'destroy')->name('destroy');
 })->middleware('auth');
+Route::get('/user/{id}', [AccountController::class, 'user'])->name('user');
 
 Route::controller(AlbumController::class)->prefix('album')->name('album.')->group(function () {
     Route::get('/', 'index')->name('index');
@@ -54,7 +54,7 @@ Route::controller(AlbumController::class)->prefix('album')->name('album.')->grou
 
 Route::controller(PhotoController::class)->prefix('photo')->name('photo.')->group(function () {
     Route::get('/', 'index')->name('index');
-    Route::get('/create', 'create')->name('create');
+    Route::get('/{id}/create', 'create')->name('create');
     Route::post('/store', 'store')->name('store');
     Route::get('/{id}/show', 'show')->name('show');
     Route::get('/{id}/edit', 'edit')->name('edit');

@@ -15,15 +15,11 @@
 @section('content')
     <div class="profile">
         <h4 style="display: flex; justify-content:space-between">
-            {{ Auth::user()->nama }}
-            <div>
-                <a href="{{ route('account.edit', Auth::user()->id) }}" class="edit-profil">Edit Profil</a>
-                <a href="{{ route('album.create') }}" class="create-button">Buat Album Baru</a>
-            </div>
+            {{ $user->nama }}
         </h4>
         <p>
-            {{ Auth::user()->username }} <br><br>
-            {{ Auth::user()->alamat }}
+            {{ $user->username }} <br><br>
+            {{ $user->alamat }}
         </p>
     </div>
     <hr>
@@ -34,11 +30,6 @@
                     <a href="{{ route('album.show', $item->id) }}">
                         <h3>{{ $item->nama }}</h3>
                     </a>
-                </td>
-                <td>
-                    <form action="{{ route('album.destroy', $item->id) }}" method="get">
-                        <input type="submit" value="Hapus Album">
-                    </form>
                 </td>
             </tr>
         </table>

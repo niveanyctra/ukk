@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Album;
 use App\Models\Photo;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,8 +15,16 @@ class AccountController extends Controller
      */
     public function index()
     {
+        $album = Album::where('user_id', Auth::user()->id)->get();
         $photo = Photo::where('user_id', Auth::user()->id)->get();
-        return view('pages.account.index', compact('photo'));
+        return view('pages.account.index', compact('photo', 'album'));
+    }
+    public function user($id)
+    {
+        $user = User::find($id);
+        $album = Album::where('user_id', $id)->get();
+        $photo = Photo::where('user_id', $id)->get();
+        return view('pages.user.index', compact('user','photo', 'album'));
     }
 
     /**

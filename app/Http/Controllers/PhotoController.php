@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PhotoController extends Controller
@@ -23,9 +24,9 @@ class PhotoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($id)
     {
-        $album = Album::all();
+        $album = Album::find($id);
         return view('pages.photo.create', compact('album'));
     }
 
@@ -38,7 +39,8 @@ class PhotoController extends Controller
             [
                 'judul' => 'required|max:255',
                 'deskripsi' => 'required',
-                'path' => 'required|image'
+                'path' => 'required|image',
+                'album_id' => 'required',
             ]
         );
 
@@ -91,15 +93,26 @@ class PhotoController extends Controller
             [
                 'judul' => 'required|max:255',
                 'deskripsi' => 'required',
-                'album_id' => 'nullable',
+                'path' => 'nullable|image',
+                'album_id' => 'required',
             ]
         );
+        if ($request->hasFile('path') && !empty($request->path)) {
+
+            if ($photo->path) {
+                Storage::delete('public/' . $photo->path);
+            }
+
+            $file = $request->file('path');
+            $fileName = Str::random(20) . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/photos', $fileName);
+
+            $photo->path = "photos/{$fileName}";
+        }
 
         $photo->judul = $request->judul;
         $photo->deskripsi = $request->deskripsi;
-        if ($request->album_id) {
-            $photo->album_id = $request->album_id;
-        }
+        $photo->album_id = $request->album_id;
         $photo->save();
         return redirect()->route('account.index');
     }
@@ -110,6 +123,9 @@ class PhotoController extends Controller
     public function destroy(string $id)
     {
         $photo = Photo::find($id);
+        if ($photo->path) {
+            Storage::delete('public/' . $photo->path);
+        }
         $photo->delete();
 
         return redirect()->route('account.index');

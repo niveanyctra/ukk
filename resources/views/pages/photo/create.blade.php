@@ -5,12 +5,7 @@
         <table>
             <tr>
                 <td>
-                    <select name="album_id" id="">
-                        <option value="">Tambah Album</option>
-                        @foreach ($album as $item)
-                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" name="album_id" value="{{ $album->id }}" hidden>
                 </td>
             </tr>
             <tr>

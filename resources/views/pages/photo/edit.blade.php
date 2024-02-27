@@ -8,7 +8,6 @@
 @endpush
 @section('content')
     <div class="show-postingan">
-        <img src="{{ Storage::url($photo->path) }}" alt="" width="500px">
         <div class="comment">
             <div style="display: flex;justify-content:space-between; width:500px">
                 <span style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span>
@@ -20,9 +19,14 @@
             <p>
                 <span style="font-weight: bold; font-size:13px;">{{ $photo->user->username }}</span>
             </p>
-            <form action="{{ route('photo.update', $photo->id) }}" method="post">
+            <form action="{{ route('photo.update', $photo->id) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <table>
+                    <tr>
+                        <td>
+                            <input type="file" accept=".png, .jpg, .jpeg" name="path">
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <input type="text" name="judul" value="{{ old('judul', $photo->judul) }}">

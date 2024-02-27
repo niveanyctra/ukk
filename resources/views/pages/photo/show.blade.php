@@ -54,10 +54,17 @@
                         {{ $item->isi }} <br>
                         <div style="display: flex;gap:10px">
                             {{ $item->created_at->diffForHumans() }}
-                            <form action="{{ route('comment.destroy', $item->id) }}" method="get">
-                                @csrf
-                                <input type="submit" value="hapus" style="color: red;background-color:white;border:0">
-                            </form>
+                            @if ($photo->user_id == Auth::user()->id)
+                                <form action="{{ route('comment.destroy', $item->id) }}" method="get">
+                                    @csrf
+                                    <input type="submit" value="hapus" style="color: red;background-color:white;border:0">
+                                </form>
+                            @elseif ($item->user_id == Auth::user()->id)
+                                <form action="{{ route('comment.destroy', $item->id) }}" method="get">
+                                    @csrf
+                                    <input type="submit" value="hapus" style="color: red;background-color:white;border:0">
+                                </form>
+                            @endif
                         </div>
                     </div>
                 @endforeach
