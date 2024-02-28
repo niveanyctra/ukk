@@ -55,7 +55,13 @@
                     @endif
                 </div>
                 <div>
-                    <span style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span>
+                    @if ($item->user_id == Auth::user()->id)
+                        <a href="{{ route('account.index') }}"><span
+                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                    @else
+                        <a href="{{ route('user', $item->user->id) }}"><span
+                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                    @endif
                     {{ $item->judul }} <br>
                     {{ $item->deskripsi }}
                 </div>

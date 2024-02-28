@@ -29,7 +29,13 @@
         <img src="{{ Storage::url($photo->path) }}" alt="" width="500px">
         <div class="comment">
             <div style="display: flex;justify-content:space-between; width:500px">
-                <span style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span>
+                @if ($photo->user_id == Auth::user()->id)
+                    <a href="{{ route('account.index') }}"><span
+                            style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
+                @else
+                    <a href="{{ route('user', $photo->user->id) }}"><span
+                            style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
+                @endif
                 @if ($photo->user_id == Auth::user()->id)
                     <div>
                         <a href="{{ route('photo.edit', $photo->id) }}">Edit</a>
@@ -43,7 +49,7 @@
                 {{ $photo->judul }} <br><br>
                 {{ $photo->deskripsi }}<br>
                 @if ($photo->album)
-                    album {{ $photo->album->nama }} -
+                    album <a href="{{ route('album.show', $photo->album_id) }}">{{ $photo->album->nama }}</a> -
                 @endif
                 {{ $photo->created_at->diffForHumans() }}
             </p>
