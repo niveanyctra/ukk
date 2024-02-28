@@ -23,6 +23,7 @@
         </h4>
         <p>
             {{ Auth::user()->username }} <br><br>
+            {{ Auth::user()->email }} <br><br>
             {{ Auth::user()->alamat }}
         </p>
     </div>

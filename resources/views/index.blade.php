@@ -22,9 +22,11 @@
         <div class="postingan">
             <div class="top-postingan">
                 <p>
-                    @if ($item->user_id == Auth::user()->id)
-                        <a href="{{ route('account.index') }}"><span
-                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                    @if (Auth::user())
+                        @if ($item->user_id == Auth::user()->id)
+                            <a href="{{ route('account.index') }}"><span
+                                    style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                        @endif
                     @else
                         <a href="{{ route('user', $item->user->id) }}"><span
                                 style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
@@ -55,9 +57,11 @@
                     @endif
                 </div>
                 <div>
-                    @if ($item->user_id == Auth::user()->id)
-                        <a href="{{ route('account.index') }}"><span
-                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                    @if (Auth::user())
+                        @if ($item->user_id == Auth::user()->id)
+                            <a href="{{ route('account.index') }}"><span
+                                    style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
+                        @endif
                     @else
                         <a href="{{ route('user', $item->user->id) }}"><span
                                 style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -

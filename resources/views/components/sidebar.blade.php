@@ -8,7 +8,9 @@
                 <a href="{{ route('account.index') }}">Profil</a>
             @else
                 <a href="{{ route('login') }}">Login</a>
-                <a href="{{ route('register') }}">Login</a>
+        </li>
+        <li>
+            <a href="{{ route('register') }}">Register</a>
             @endif
         </li>
         <li>

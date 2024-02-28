@@ -18,7 +18,8 @@
             {{ $user->nama }}
         </h4>
         <p>
-            {{ $user->username }} <br><br>
+            @ {{ $user->username }} <br><br>
+            {{ $user->email }} <br><br>
             {{ $user->alamat }}
         </p>
     </div>
@@ -37,8 +38,7 @@
     <hr>
     @foreach ($photo as $item)
         <a href="{{ route('photo.show', $item->id) }}">
-            <img src="{{ Storage::url($item->path) }}" alt="" width="300px" height="300px"
-                style="object-fit: cover;">
+            <img src="{{ Storage::url($item->path) }}" alt="" width="300px" height="300px" style="object-fit: cover;">
         </a>
     @endforeach
 @endsection

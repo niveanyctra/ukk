@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [FrontendController::class, 'home'])->name('home');
+Route::get('/', [FrontendController::class, 'home'])->name('home')->middleware('guest');
 Route::post('/{id}/comment', [CommentController::class, 'comment'])->name('comment')->middleware('auth');
 Route::post('/{id}/like', [LikeController::class, 'like'])->name('like')->middleware('auth');
 Route::post('/search', [FrontendController::class, 'search'])->name('search')->middleware('auth');

@@ -29,18 +29,22 @@
         <img src="{{ Storage::url($photo->path) }}" alt="" width="500px">
         <div class="comment">
             <div style="display: flex;justify-content:space-between; width:500px">
-                @if ($photo->user_id == Auth::user()->id)
-                    <a href="{{ route('account.index') }}"><span
-                            style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
+                @if (Auth::user())
+                    @if ($photo->user_id == Auth::user()->id)
+                        <a href="{{ route('account.index') }}"><span
+                                style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
+                    @endif
                 @else
                     <a href="{{ route('user', $photo->user->id) }}"><span
                             style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
                 @endif
-                @if ($photo->user_id == Auth::user()->id)
-                    <div>
-                        <a href="{{ route('photo.edit', $photo->id) }}">Edit</a>
-                        <a href="{{ route('photo.destroy', $photo->id) }}">Hapus</a>
-                    </div>
+                @if (Auth::user())
+                    @if ($photo->user_id == Auth::user()->id)
+                        <div>
+                            <a href="{{ route('photo.edit', $photo->id) }}">Edit</a>
+                            <a href="{{ route('photo.destroy', $photo->id) }}">Hapus</a>
+                        </div>
+                    @endif
                 @endif
             </div>
             <hr>
