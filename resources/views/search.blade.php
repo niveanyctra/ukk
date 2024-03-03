@@ -1,47 +1,33 @@
-@extends('layout.app')
+@extends('layouts.app')
 @section('content')
-    <form action="{{ route('search') }}" method="post">
-        @csrf
-        <input type="text" name="query">
-        <button type="submit">Cari</button>
-    </form>
-    <h2>Users</h2>
-    @if ($users->isNotEmpty())
+    <div class="container">
+        <h3>User</h3>
         <ul>
             @foreach ($users as $user)
                 <li>
-                    <a href="{{ route('user', $user->id) }}">{{ $user->username }} - {{ $user->nama }}</a>
+                    <a href="{{ route('user.show', $user->username) }}" class="text-decoration-none text-dark">
+                        <h5>{{ $user->username }} - {{ $user->nama }}</h5>
+                    </a>
                 </li>
             @endforeach
         </ul>
-    @else
-        <p>No users found.</p>
-    @endif
-
-    <h2>Albums</h2>
-    @if ($albums->isNotEmpty())
+        <hr>
+        <h3>Album</h3>
         <ul>
             @foreach ($albums as $album)
                 <li>
-                    <a href="{{ route('album.show', $album->id) }}">{{ $album->nama }} - {{ $album->user->username }}</a>
+                    <a href="{{ route('album.show', $album->id) }}" class="text-decoration-none text-dark">
+                        <h5>{{ $album->user->username }} - {{ $album->nama }}</h5>
+                    </a>
                 </li>
             @endforeach
         </ul>
-    @else
-        <p>No albums found.</p>
-    @endif
-
-    <h2>Photos</h2>
-    @if ($photos->isNotEmpty())
-        <ul>
-            @foreach ($photos as $photo)
-                <li>
-                    <a href="{{ route('photo.show', $photo->id) }}">{{ $photo->judul }} - {{ $photo->user->username }}</a>
-                </li>
-            @endforeach
-        </ul>
-    @else
-        <p>No photos found.</p>
-    @endif
-
+        <hr>
+        <h3>Photo</h3>
+        @foreach ($photos as $photo)
+            <a href="{{ route('photo.show', $photo->id) }}">
+                <img src="{{ Storage::url($photo->path) }}" alt="" class="img-fluid" width="300px">
+            </a>
+        @endforeach
+    </div>
 @endsection

@@ -1,26 +1,38 @@
-@extends('layout.app')
+@extends('layouts.app')
 @section('content')
-    <div style="display: flex; justify-content:space-between">
-        <div>
-            <h1>
-                {{ $album->nama }}
-            </h1>
-            <p>
-                {{ $album->deskripsi }}
-            </p>
+    <div class="container">
+        <div class="d-flex justify-content-between me-5">
+            <h4>{{ $album->nama }}</h4>
+            @auth
+                @if ($album->user->id == Auth::user()->id)
+                    <div>
+                        <a href="{{ route('album.edit', $album->id) }}" class="btn btn-dark">Edit Album</a>
+                        <a href="{{ route('album.destroy', $album->id) }}" class="btn btn-danger">Hapus Album</a>
+                    </div>
+                @endif
+            @endauth
         </div>
-        @if ($album->user_id == Auth::user()->id)
-            <div>
-                <a href="{{ route('album.edit', $album->id) }}">Edit</a>
-                <a href="{{ route('album.destroy', $album->id) }}">Hapus</a>
-                <a href="{{ route('photo.create', $album->id) }}" class="create-button">Tambah Foto Baru</a>
-            </div>
-        @endif
+        <p>{{ $album->deskripsi }}</p>
     </div>
     <hr>
-    @foreach ($photo as $item)
-        <a href="{{ route('photo.show', $item->id) }}">
-            <img src="{{ Storage::url($item->path) }}" alt="" width="300px" height="300px">
-        </a>
-    @endforeach
+    <div class="container">
+        <div class="d-flex justify-content-between me-5 mb-3">
+            <h4>Photo</h4>
+            @auth
+                @if ($album->user->id == Auth::user()->id)
+                    <a href="{{ route('photo.create', $album->id) }}" class="btn btn-dark">Tambah Foto</a>
+                @endif
+            @endauth
+        </div>
+        <div class="row">
+            @foreach ($photos as $photo)
+                <div class="col-3 me-4">
+                    <a href="{{ route('photo.show', $photo->id) }}" class="text-decoration-none text-dark">
+                        <img src="{{ Storage::url($photo->path) }}" alt="" width="300px" height="300px"
+                            class="img-fluid">
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
 @endsection

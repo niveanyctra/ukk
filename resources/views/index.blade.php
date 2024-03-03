@@ -1,86 +1,30 @@
-@extends('layout.app')
-@push('style')
-    <style>
-        .postingan {
-            padding-bottom: 20px;
-            border-bottom: 1px solid;
-            width: 400px;
-        }
-
-        .top-postingan {
-            display: flex;
-        }
-    </style>
-@endpush
+@extends('layouts.app')
 @section('content')
-    <form action="{{ route('search') }}" method="post">
-        @csrf
-        <input type="text" name="query">
-        <button type="submit">Cari</button>
-    </form>
-    @foreach ($photo as $item)
-        <div class="postingan">
-            <div class="top-postingan">
-                <p>
-                    @if (Auth::user())
-                        @if ($item->user_id == Auth::user()->id)
-                            <a href="{{ route('account.index') }}"><span
-                                    style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
-                        @endif
-                    @else
-                        <a href="{{ route('user', $item->user->id) }}"><span
-                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
-                    @endif
-                    {{ $item->created_at->diffForHumans() }}
-                </p>
-            </div>
-            <a href="{{ route('photo.show', $item->id) }}">
-                <img src="{{ Storage::url($item->path) }}" alt="" width="400px">
-            </a>
-            <div class="bottom-postingan">
-                <div style="display: flex">
-                    <form action="{{ route('like', $item->id) }}" method="post">
-                        @csrf
-                        @php
-                            $userLiked = $item->like->contains('user_id', auth()->id());
-                        @endphp
-                        <button type="submit" style="background-color: white;border:0;">
-                            <i class="{{ $userLiked ? 'fa-solid fa-heart fa-2xl' : 'fa-regular fa-heart fa-2xl' }}"></i>
-                        </button>
-                    </form>
-                    <a href="{{ route('photo.show', $item->id) }}"><i class="fa-regular fa-comment fa-2xl"
-                            style="margin-left: 10px"></i></a>
+    <div class="row">
+        <div class="col-8 row">
+            @foreach ($photos as $photo)
+                <div class="col-6">
+                    <p>
+                        <a href="{{ route('user.show', $photo->user->username) }}"
+                            class="text-decoration-none text-dark fs-5">{{ $photo->user->username }}</a>
+                        - {{ $photo->created_at->diffForHumans() }}
+                    </p>
+                    <a href="{{ route('photo.show', $photo->id) }}" class="text-decoration-none text-dark">
+                        <img src="{{ Storage::url($photo->path) }}" alt="" width="300px"class="img-fluid">
+                    </a>
+                    <hr width="300px">
                 </div>
-                <div style="margin-top: 7px">
-                    @if ($item->like)
-                        {{ $item->like->where('photo_id', $item->id)->count() }} Likes
-                    @endif
-                </div>
-                <div>
-                    @if (Auth::user())
-                        @if ($item->user_id == Auth::user()->id)
-                            <a href="{{ route('account.index') }}"><span
-                                    style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
-                        @endif
-                    @else
-                        <a href="{{ route('user', $item->user->id) }}"><span
-                                style="font-weight: bold; font-size:15px;">{{ $item->user->username }}</span></a> -
-                    @endif
-                    {{ $item->judul }} <br>
-                    {{ $item->deskripsi }}
-                </div>
-                <div style="margin-top: 8px">
-                    @if ($item->comment)
-                        <a href="{{ route('photo.show', $item->id) }}">view all
-                            {{ $item->comment->where('photo_id', $item->id)->count() }} comments</a>
-                    @endif
-                </div>
-                <form action="{{ route('comment', $item->id) }}" method="post">
-                    @csrf
-                    <input type="text" name="isi" placeholder="Tambah komentar...">
-                    <input type="submit" value="kirim">
-                </form>
-            </div>
+            @endforeach
         </div>
-    @endforeach
+        <div class="col-4">
+            <h3>User</h3>
+            <hr>
+            @foreach ($users as $user)
+                <p>
+                    <a href="{{ route('user.show', $user->username) }}"
+                        class="text-decoration-none text-dark fs-5">{{ $user->username }}</a>
+                </p>
+            @endforeach
+        </div>
+    </div>
 @endsection

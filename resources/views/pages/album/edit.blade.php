@@ -1,23 +1,18 @@
-@extends('layout.app')
+@extends('layouts.app')
 @section('content')
-    <form action="{{ route('album.update', $album->id) }}" method="post">
-        @csrf
-        <table>
-            <tr>
-                <td>
-                    <input type="text" name="nama" value="{{ old('nama', $album->nama) }}">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <textarea name="deskripsi" id="" cols="30" rows="10">{{ old('deskripsi', $album->deskripsi) }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button type="submit">ubah</button>
-                </td>
-            </tr>
-        </table>
-    </form>
+    <div class="mx-auto p-2" style="width: 500px;">
+        <form action="{{ route('album.update', $album->id) }}" method="post">
+            @csrf
+            <div class="mb-3">
+                <label for="nama" class="form-label">Nama</label>
+                <input type="nama" class="form-control" name="nama" id="nama"
+                    value="{{ old('nama', $album->nama) }}">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Deskripsi</span>
+                <textarea class="form-control" name="deskripsi" aria-label="Alamat">{{ old('nama', $album->deskripsi) }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-secondary w-100">Submit</button>
+        </form>
+    </div>
 @endsection

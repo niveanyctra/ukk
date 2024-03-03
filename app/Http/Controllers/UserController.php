@@ -6,25 +6,15 @@ use App\Models\Album;
 use App\Models\Photo;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class AccountController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $album = Album::where('user_id', Auth::user()->id)->get();
-        $photo = Photo::where('user_id', Auth::user()->id)->get();
-        return view('pages.account.index', compact('photo', 'album'));
-    }
-    public function user($id)
-    {
-        $user = User::find($id);
-        $album = Album::where('user_id', $id)->get();
-        $photo = Photo::where('user_id', $id)->get();
-        return view('pages.user.index', compact('user','photo', 'album'));
+        //
     }
 
     /**
@@ -32,6 +22,7 @@ class AccountController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
@@ -45,9 +36,12 @@ class AccountController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $username)
     {
-        //
+        $user = User::where('username', $username)->first();
+        $albums = Album::where('user_id', $user->id)->get();
+        $photos = Photo::where('user_id', $user->id)->get();
+        return view('pages.user.show', compact('user', 'albums', 'photos'));
     }
 
     /**
@@ -56,7 +50,7 @@ class AccountController extends Controller
     public function edit(string $id)
     {
         $user = User::find($id);
-        return view('pages.account.edit', compact('user'));
+        return view('pages.user.edit', compact('user'));
     }
 
     /**
@@ -65,27 +59,23 @@ class AccountController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
-
-        $request->validate(
-            [
-                'username' => 'required|unique:users,username,' . $user->id . '|lowercase',
-                'password' => 'nullable|confirmed',
-                'nama' => 'required|max:255',
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'alamat' => 'required'
-            ]
-        );
-
-        $user->username = $request->username;
-        if ($request->password) {
+        $request->validate([
+            'nama' => 'required|max:255',
+            'username' => 'required|unique:users,username,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'alamat' => 'required',
+            'password' => 'nullable',
+        ]);
+        if($request->password)
+        {
             $user->password = bcrypt($request->password);
         }
         $user->nama = $request->nama;
+        $user->username = $request->username;
         $user->email = $request->email;
         $user->alamat = $request->alamat;
         $user->save();
-
-        return redirect()->route('account.index');
+        return redirect()->route('user.show', $user->username);
     }
 
     /**
@@ -94,9 +84,7 @@ class AccountController extends Controller
     public function destroy(string $id)
     {
         $user = User::find($id);
-
         $user->delete();
-
         return redirect()->route('home');
     }
 }

@@ -17,8 +17,7 @@ class PhotoController extends Controller
      */
     public function index()
     {
-        $photo = Photo::where('user_id', Auth::user()->id)->get();
-        return view('pages.account.photo.index', compact('photo'));
+        //
     }
 
     /**
@@ -35,30 +34,23 @@ class PhotoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'judul' => 'required|max:255',
-                'deskripsi' => 'required',
-                'path' => 'required|image',
-                'album_id' => 'required',
-            ]
-        );
-
+        $request->validate([
+            'judul' => 'required|max:255',
+            'deskripsi' => 'required',
+            'path' => 'required|image',
+            'album_id' => 'required'
+        ]);
         $file = $request->file('path');
         $fileName = Str::random(20) . '.' . $file->getClientOriginalExtension();
         $file->storeAs('public/photos', $fileName);
-
-        Photo::create(
-            [
-                'judul' => $request->judul,
-                'deskripsi' => $request->deskripsi,
-                'path' => "photos/{$fileName}",
-                'album_id' => $request->album_id,
-                'user_id' => Auth::user()->id
-            ]
-        );
-
-        return redirect()->route('home');
+        Photo::create([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'path' => "photos/{$fileName}",
+            'album_id' => $request->album_id,
+            'user_id' => Auth::user()->id,
+        ]);
+        return redirect()->route('user.show', Auth::user()->username);
     }
 
     /**
@@ -67,9 +59,8 @@ class PhotoController extends Controller
     public function show(string $id)
     {
         $photo = Photo::find($id);
-        $comment = Comment::where('photo_id', $photo->id)->get();
-
-        return view('pages.photo.show', compact('photo', 'comment'));
+        $comments = Comment::where('photo_id', $photo->id)->get();
+        return view('pages.photo.show', compact('photo', 'comments'));
     }
 
     /**
@@ -78,9 +69,8 @@ class PhotoController extends Controller
     public function edit(string $id)
     {
         $photo = Photo::find($id);
-        $album = Album::all();
-
-        return view('pages.photo.edit', compact('photo', 'album'));
+        $albums = Album::where('user_id', $photo->user_id)->get();
+        return view('pages.photo.edit', compact('photo', 'albums'));
     }
 
     /**
@@ -89,32 +79,26 @@ class PhotoController extends Controller
     public function update(Request $request, string $id)
     {
         $photo = Photo::find($id);
-        $request->validate(
-            [
-                'judul' => 'required|max:255',
-                'deskripsi' => 'required',
-                'path' => 'nullable|image',
-                'album_id' => 'required',
-            ]
-        );
+        $request->validate([
+            'judul' => 'required|max:255',
+            'deskripsi' => 'required',
+            'path' => 'nullable|image',
+            'album_id' => 'required'
+        ]);
         if ($request->hasFile('path') && !empty($request->path)) {
-
-            if ($photo->path) {
-                Storage::delete('public/' . $photo->path);
+            if ($request->path) {
+                Storage::delete('photos/' . $photo->path);
             }
-
             $file = $request->file('path');
             $fileName = Str::random(20) . '.' . $file->getClientOriginalExtension();
             $file->storeAs('public/photos', $fileName);
-
             $photo->path = "photos/{$fileName}";
         }
-
         $photo->judul = $request->judul;
         $photo->deskripsi = $request->deskripsi;
         $photo->album_id = $request->album_id;
         $photo->save();
-        return redirect()->route('account.index');
+        return redirect()->route('photo.show', $photo->id);
     }
 
     /**
@@ -123,11 +107,7 @@ class PhotoController extends Controller
     public function destroy(string $id)
     {
         $photo = Photo::find($id);
-        if ($photo->path) {
-            Storage::delete('public/' . $photo->path);
-        }
         $photo->delete();
-
-        return redirect()->route('account.index');
+        return redirect()->route('user.show', Auth::user()->username);
     }
 }

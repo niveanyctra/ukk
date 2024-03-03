@@ -21,8 +21,8 @@ class User extends Authenticatable
         'nama',
         'username',
         'email',
-        'password',
         'alamat',
+        'password',
     ];
 
     /**
@@ -44,9 +44,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    function comment()
-    {
-        return $this->hasMany(Comment::class);
-    }
 }

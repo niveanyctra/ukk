@@ -14,41 +14,26 @@ class AuthController extends Controller
     {
         return view('pages.auth.login');
     }
-
     public function login(Request $request)
     {
-        $request->validate(
-            [
-                'username' => 'required|max:255',
-                'password' => 'required|max:255'
-            ],
-            [
-                'username.required' => 'Username harus diisi',
-                'password.required' => 'Password harus diisi',
-                'username.max' => 'Username hanya boleh diisi 225 karakter',
-                'password.max' => 'Password hanya boleh diisi 225 karakter',
-            ]
-        );
-
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]);
         $user = User::where('username', $request->username)->first();
-
         if (!$user) {
-            return redirect('login')->with('error', 'Username dan password tidak sesuai');
+            return redirect('login');
         }
-
         if (Hash::check($request->password, $user->password)) {
             Auth::loginUsingId($user->id);
             return redirect()->route('home');
         }
-
-        return redirect('login')->with('error', 'Username dan password tidak sesuai');
+        return redirect('login');
     }
-
     public function logout()
     {
         Session::flush();
         Auth::logout();
-
-        return redirect('login');
+        return redirect()->route('home');
     }
 }

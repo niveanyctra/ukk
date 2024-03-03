@@ -1,105 +1,85 @@
-@extends('layout.app')
-@push('style')
+@extends('layouts.app')
+@push('styles')
     <style>
-        .show-postingan {
-            display: flex;
-        }
-
-        .comment {
-            margin-left: 30px
-        }
-
-        .like-comment-fixed {
+        .cl {
             position: fixed;
-            margin-bottom: 50px;
-            bottom: 0;
             z-index: 1;
-        }
-
-        .comment-fixed {
-            position: fixed;
-            margin-bottom: 20px;
             bottom: 0;
-            z-index: 1;
+            margin-bottom: 30px;
         }
     </style>
 @endpush
 @section('content')
-    <div class="show-postingan">
+    <div class="d-flex">
         <img src="{{ Storage::url($photo->path) }}" alt="" width="500px">
-        <div class="comment">
-            <div style="display: flex;justify-content:space-between; width:500px">
-                @if (Auth::user())
-                    @if ($photo->user_id == Auth::user()->id)
-                        <a href="{{ route('account.index') }}"><span
-                                style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
-                    @endif
-                @else
-                    <a href="{{ route('user', $photo->user->id) }}"><span
-                            style="font-weight: bold; font-size:15px;">{{ $photo->user->username }}</span></a> -
-                @endif
-                @if (Auth::user())
+        <div class="container me-5 ms-3">
+            <div class="d-flex justify-content-between">
+                <p>
+                    <a href="{{ route('user.show', $photo->user->username) }}"
+                        class="text-decoration-none text-dark fs-5">{{ $photo->user->username }}</a>
+                    - {{ $photo->created_at->diffForHumans() }}
+                </p>
+                @auth
                     @if ($photo->user_id == Auth::user()->id)
                         <div>
-                            <a href="{{ route('photo.edit', $photo->id) }}">Edit</a>
-                            <a href="{{ route('photo.destroy', $photo->id) }}">Hapus</a>
+                            <a href="{{ route('photo.edit', $photo->id) }}" class="btn btn-info">Edit</a>
+                            <a href="{{ route('photo.destroy', $photo->id) }}" class="btn btn-danger">Hapus</a>
                         </div>
                     @endif
-                @endif
+                @endauth
             </div>
             <hr>
-            <p>
-                <span style="font-weight: bold; font-size:13px;">{{ $photo->user->username }}</span>
-                {{ $photo->judul }} <br><br>
-                {{ $photo->deskripsi }}<br>
-                @if ($photo->album)
-                    album <a href="{{ route('album.show', $photo->album_id) }}">{{ $photo->album->nama }}</a> -
-                @endif
-                {{ $photo->created_at->diffForHumans() }}
+            <h5>{{ $photo->judul }}</h5>
+            <p>{{ $photo->deskripsi }}</p>
+            <p>Album <a href="{{ route('album.show', $photo->album_id) }}">
+                    <span class="badge text-bg-success">{{ $photo->album->nama }}</span>
+                </a>
             </p>
-            @if ($photo->comment)
-                @foreach ($comment as $item)
-                    <div style="margin-top: 10px">
-                        <span style="font-weight: bold; font-size:13px;">{{ $item->user->username }}</span>
-                        {{ $item->isi }} <br>
-                        <div style="display: flex;gap:10px">
-                            {{ $item->created_at->diffForHumans() }}
-                            @if ($photo->user_id == Auth::user()->id)
-                                <form action="{{ route('comment.destroy', $item->id) }}" method="get">
-                                    @csrf
-                                    <input type="submit" value="hapus" style="color: red;background-color:white;border:0">
-                                </form>
-                            @elseif ($item->user_id == Auth::user()->id)
-                                <form action="{{ route('comment.destroy', $item->id) }}" method="get">
-                                    @csrf
-                                    <input type="submit" value="hapus" style="color: red;background-color:white;border:0">
-                                </form>
+            <hr>
+            @foreach ($comments as $comment)
+                <div class="container">
+                    <p>
+                        <span class="fw-bold">{{ $comment->user->username }}</span>
+                        {{ $comment->isi }} <br>
+                        {{ $comment->created_at->diffForHumans() }}
+                        @auth
+                            @if ($comment->user_id == Auth::user()->id)
+                                <a href="{{ route('comment.destroy', $comment->id) }}"
+                                    class="text-decoration-none text-danger"> -
+                                    Hapus Komentar</a>
                             @endif
-                        </div>
-                    </div>
-                @endforeach
-            @endif
-            <div style="display: flex" class="like-comment-fixed">
-                <form action="{{ route('like', $photo->id) }}" method="post">
+                        @endauth
+                    </p>
+                </div>
+            @endforeach
+            <div class="cl">
+                <div class="d-flex mb-3 bg-light">
+                    <form action="{{ route('like', $photo->id) }}" method="post">
+                        @csrf
+                        @php
+                            $userLiked = $photo->like->contains('user_id', Auth::user()->id);
+                        @endphp
+                        <button type="submit" style="border: 0; background-color:white;">
+                            <i class="{{ $userLiked ? 'fa-solid fa-heart fa-2xl' : 'fa-regular fa-heart fa-2xl' }}"></i>
+                        </button>
+                        {{ $photo->like->count() }} likes
+                    </form>
+                    <a href="{{ route('photo.show', $photo->id) }}" class="text-dark ms-5"
+                        style="border: 0; background-color:white;">
+                        <i class="fa-regular fa-comment fa-2xl"></i>
+                    </a>
+                </div>
+                <form action="{{ route('comment', $photo->id) }}" method="post">
                     @csrf
-                    @php
-                        $userLiked = $photo->like->contains('user_id', auth()->id());
-                    @endphp
-                    <button type="submit" style="background-color: white;border:0;">
-                        <i class="{{ $userLiked ? 'fa-solid fa-heart fa-2xl' : 'fa-regular fa-heart fa-2xl' }}"></i>
-                    </button>
-                    @if ($photo->like)
-                        {{ $photo->like->where('photo_id', $photo->id)->count() }} Likes
-                    @endif
+                    <div class="d-flex">
+                        <input class="form-control" type="text" placeholder="Tambah komentar . . ."
+                            aria-label="default input example" name="isi" style="width: 500px">
+                        <button type="submit" style="border: 0; background-color:white;">
+                            <i class="fa-solid fa-paper-plane fa-2xl"></i>
+                        </button>
+                    </div>
                 </form>
-                <a href="{{ route('photo.show', $photo->id) }}"><i class="fa-regular fa-comment fa-2xl"
-                        style="margin-left: 10px"></i></a>
             </div>
-            <form action="{{ route('comment', $photo->id) }}" method="post" class="comment-fixed">
-                @csrf
-                <input type="text" name="isi" placeholder="Tambah komentar...">
-                <input type="submit" value="kirim">
-            </form>
         </div>
     </div>
 @endsection

@@ -8,30 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class Photo extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'judul',
         'deskripsi',
         'path',
-        'album_id',
         'user_id',
+        'album_id',
     ];
 
-    function album()
+    public function user()
     {
-        return $this->belongsTo(Album::class, 'album_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
     }
-    function user()
+    public function album()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(Album::class, 'album_id');
     }
-
-    function comment()
+    public function comment()
     {
-        return $this->hasOne(Comment::class,  'photo_id',);
+        return $this->hasOne(Comment::class);
     }
-    function like()
+    public function like()
     {
-        return $this->hasMany(Like::class,  'photo_id',);
+        return $this->hasMany(Like::class);
     }
 }

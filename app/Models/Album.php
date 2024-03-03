@@ -8,20 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Album extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'nama',
         'deskripsi',
-        'user_id'
+        'user_id',
     ];
 
-    function user()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
     }
-
-    function photo()
+    public function photo()
     {
-        return $this->hasmany(Photo::class);
+        return $this->hasMany(Photo::class);
     }
 }

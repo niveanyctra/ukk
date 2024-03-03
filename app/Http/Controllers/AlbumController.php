@@ -14,8 +14,7 @@ class AlbumController extends Controller
      */
     public function index()
     {
-        $album = Album::where('user_id', Auth::user()->id)->get();
-        return view('pages.account.album.index', compact('album'));
+        //
     }
 
     /**
@@ -31,20 +30,16 @@ class AlbumController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'nama' => 'required|max:255',
-                'deskripsi' => 'required'
-            ]
-        );
-
+        $request->validate([
+            'nama' => 'required|max:255',
+            'deskripsi' => 'required',
+        ]);
         Album::create([
             'nama' => $request->nama,
             'deskripsi' => $request->deskripsi,
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
         ]);
-
-        return redirect()->route('home');
+        return redirect()->route('user.show', Auth::user()->username);
     }
 
     /**
@@ -53,9 +48,8 @@ class AlbumController extends Controller
     public function show(string $id)
     {
         $album = Album::find($id);
-        $photo = Photo::where('album_id', $album->id)->get();
-
-        return view('pages.album.show', compact('album', 'photo'));
+        $photos = Photo::where('album_id', $album->id)->get();
+        return view('pages.album.show', compact('album', 'photos'));
     }
 
     /**
@@ -64,7 +58,6 @@ class AlbumController extends Controller
     public function edit(string $id)
     {
         $album = Album::find($id);
-
         return view('pages.album.edit', compact('album'));
     }
 
@@ -74,17 +67,14 @@ class AlbumController extends Controller
     public function update(Request $request, string $id)
     {
         $album = Album::find($id);
-        $request->validate(
-            [
-                'nama' => 'required|max:255',
-                'deskripsi' => 'required',
-            ]
-        );
-
+        $request->validate([
+            'nama' => 'required|max:255',
+            'deskripsi' => 'required',
+        ]);
         $album->nama = $request->nama;
         $album->deskripsi = $request->deskripsi;
         $album->save();
-        return redirect()->route('account.index');
+        return redirect()->route('album.show', $album->id);
     }
 
     /**
@@ -93,9 +83,7 @@ class AlbumController extends Controller
     public function destroy(string $id)
     {
         $album = Album::find($id);
-
         $album->delete();
-
-        return redirect()->route('album.index');
+        return redirect()->route('user.show', Auth::user()->username);
     }
 }

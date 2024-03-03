@@ -11,11 +11,23 @@
 
 <body>
     <div class="mx-auto p-2" style="width: 500px;">
-        <form action="{{ route('login.proccess') }}" method="post">
+        <form action="{{ route('register.proccess') }}" method="post">
             @csrf
+            <div class="mb-3">
+                <label for="nama" class="form-label">Nama</label>
+                <input type="nama" class="form-control" name="nama" id="nama" aria-describedby="emailHelp">
+            </div>
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="username" class="form-control" name="username" id="username" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp">
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Alamat</span>
+                <textarea class="form-control" name="alamat" aria-label="Alamat"></textarea>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
